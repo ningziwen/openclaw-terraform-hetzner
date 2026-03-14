@@ -87,10 +87,16 @@ else
     exit 1
 fi
 
+# Pre-create workspace directories so Docker doesn't create them as root
+WORKSPACE_BASE="${OPENCLAW_WORKSPACE_DIR:-$HOME/.openclaw/workspace}"
+for agent in main developer xsg valuemirror; do
+    mkdir -p "$WORKSPACE_BASE/$agent"
+done
+
 # Enable workspace sync profile if GIT_WORKSPACE_REPO is configured
 PROFILES=""
 SYNC_ENABLED=false
-if [[ -f .env ]] && grep -qE '^GIT_WORKSPACE_REPO=.+' .env; then
+if [[ -f .env ]] && grep -qE '^GIT_WORKSPACE_REPO(_[A-Z]+)?=.+' .env; then
     PROFILES="--profile sync"
     SYNC_ENABLED=true
 fi
